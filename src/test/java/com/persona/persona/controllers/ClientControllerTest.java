@@ -22,13 +22,17 @@ public class ClientControllerTest {
                         .param("docNumber", "23445322")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("Pedro"))
-                .andExpect(jsonPath("$.secondName").value("Pablo"))
-                .andExpect(jsonPath("$.firstLastName").value("Perez"))
-                .andExpect(jsonPath("$.secondLastName").value("Paredez"))
-                .andExpect(jsonPath("$.phone").value("3001231212"))
-                .andExpect(jsonPath("$.address").value("Calle 1 # 2-3"))
-                .andExpect(jsonPath("$.city").value("Bogotá"));
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.message").value("Cliente encontrado."))
+                .andExpect(jsonPath("$.data.documentType").value("C"))
+                .andExpect(jsonPath("$.data.documentNumber").value("23445322"))
+                .andExpect(jsonPath("$.data.firstName").value("Pedro"))
+                .andExpect(jsonPath("$.data.secondName").value("Pablo"))
+                .andExpect(jsonPath("$.data.firstLastName").value("Perez"))
+                .andExpect(jsonPath("$.data.secondLastName").value("Paredez"))
+                .andExpect(jsonPath("$.data.phone").value("3001231212"))
+                .andExpect(jsonPath("$.data.address").value("Calle 1 # 2-3"))
+                .andExpect(jsonPath("$.data.city").value("Bogotá"));
     }
 
     @Test
@@ -38,7 +42,8 @@ public class ClientControllerTest {
                         .param("docNumber", "")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Code 400, Tipo y número de documento son obligatorios."));
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("Tipo y número de documento son obligatorios."));
     }
 
     @Test
@@ -48,7 +53,8 @@ public class ClientControllerTest {
                         .param("docNumber", "23445322")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Code 400, Tipo de documento inválido. Solo se permiten 'C' y 'P'."));
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("Tipo de documento inválido. Solo se permiten 'C' y 'P'."));
     }
 
     @Test
@@ -58,6 +64,7 @@ public class ClientControllerTest {
                         .param("docNumber", "99999999")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Code 404, Cliente no encontrado."));
+                .andExpect(jsonPath("$.code").value(404))
+                .andExpect(jsonPath("$.message").value("Cliente no encontrado."));
     }
 }
